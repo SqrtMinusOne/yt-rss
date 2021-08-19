@@ -1,0 +1,39 @@
+#+TITLE: yt-rss
+
+A small Flask app which parses YouTube Atom feed via [[https://github.com/kurtmckee/feedparser][feedparser]] and generates a new one via [[https://github.com/lkiesow/python-feedgen][feedgen]].
+
+The problem this app solves is that YouTube feeds feature some non-standard tags, which [[https://github.com/skeeto/elfeed][elfeed]] (my RSS client of choice) can't recognize. So entries from a YouTube feed lack preview and description.
+
+[[https://github.com/iv-org/invidious][Invidious]] feeds don't have such a problem, but public instances seem to be unstable, and hosting one takes some resources. Hence this program.
+
+* Installation
+Install the dependencies:
+#+begin_src bash
+pip install -r requirements.txt
+#+end_src
+
+Change a token in .env file:
+#+begin_src conf-space
+TOKEN=secret
+#+end_src
+
+Run for production via a server of your choice, I prefer gunicorn:
+#+begin_src bash
+gunicorn main:app
+#+end_src
+
+If you want to deploy the thing behind a reverse proxy, you'd have to do something like this (for nginx):
+#+begin_src conf-space
+location /yt-rss/ {
+    rewrite /yt-rss/(.*) /$1 break;
+    proxy_pass http://127.0.0.1:8000;
+}
+#+end_src
+
+* Usage
+A feed for a channel will be available at
+#+begin_src bash
+http://localhost:8000/<channel_id>?token=<token>
+#+end_src
+
+[[https://stackoverflow.com/questions/14366648/how-can-i-get-a-channel-id-from-youtube][How to get a Channel ID]]

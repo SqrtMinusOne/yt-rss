@@ -1,7 +1,10 @@
-import feedparser
 import html
+import os
+
+import feedparser
+from dotenv import load_dotenv
 from feedgen.feed import FeedGenerator
-from flask import Flask
+from flask import Flask, request, abort
 from markupsafe import escape
 
 
@@ -32,11 +35,16 @@ def convert_feed(feed):
 
     return fg
 
+
+load_dotenv()
 app = Flask(__name__)
 
 
 @app.route('/<channel_id>')
 def get(channel_id):
+    if request.args['token'] != os.getenv('TOKEN'):
+        abort(401)
+        return
     d = feedparser.parse(
         f'https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}'
     )

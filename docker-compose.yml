@@ -1,0 +1,11 @@
+version: "3.5"
+
+services:
+  yt_rss:
+    restart: unless-stopped
+    container_name: "yt-rss"
+    build: .
+    ports:
+      - 8084:8000
+    environment:
+      TOKEN: secret
